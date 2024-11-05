@@ -1,7 +1,6 @@
 #root {
 	min-height: 100vh;
 	height: 100%;
-	/* background-image: url('./assets/images/bg.jpg');  */
 	background-repeat: no-repeat;
 	background-size: cover;
 	display: grid;
@@ -34,17 +33,20 @@
 	box-shadow: 0 4px 8px rgba(0, 0, 00.3);
 	transition: all0.3s ease;
 	color: #ffffff;
-	/* box-shadow: 1 1 20px 0 #0000004a; */
-	/* transition: box-shadow 0.25s; */
 }
 .card:hover {
 	box-shadow: 0 0 25px 0 #00000036;
 }
 
 .card__title {
-	color: rgba(0, 0, 0, 0.781);
+	background-color: #00000088;
+	border-radius: 15px;
+	font-family: roboto;
+	font-size: 35px;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.558);
 	text-align: center;
-	-webkit-text-stroke: 0.3px #ffffff;
+	-webkit-text-stroke: 0px #ffffff;
 }
 .card__subtitle {
 	text-align: center;
@@ -61,7 +63,6 @@
 .card__button {
 	display: block;
 	margin: 0 auto;
-	/* background-color: #000000fd; */
 	-webkit-backdrop-filter: brightness(1) blur(5px);
 	backdrop-filter: brightness(1) blur(5px);
 }
