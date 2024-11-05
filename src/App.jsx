@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 import { bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9 } from './assets/images/';
+import randomIndex from './helpers/randomIndex';
+import initialState from './helpers/initialState';
+import conditionCodes from './helpers/conditionCodes';
+// import icons from './helpers/icons';
 
 import {
 	atmosphereSvg,
@@ -17,21 +21,6 @@ const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9];
 const key = 'eeb9fbc4375472b2fb1cb0109bf62e04';
 const url = 'https://api.openweathermap.org/data/2.5/weather';
 
-const initialState = {
-	latitude: 0,
-	longitude: 0,
-};
-
-const conditionCodes = {
-	thunderstorm: [200, 201, 202, 210, 211, 212, 221, 230, 231, 232],
-	drizzle: [300, 301, 302, 310, 311, 312, 313, 314, 321],
-	rain: [500, 501, 502, 503, 504, 511, 520, 521, 522, 531],
-	snow: [600, 601, 602, 611, 612, 613, 615, 616, 620, 621, 622],
-	atmosphere: [701, 711, 721, 731, 741, 751, 761, 762, 771, 781],
-	clear: [800],
-	clouds: [801, 802, 803, 804],
-};
-
 const icons = {
 	thunderstorm: thunderstormSvg,
 	drizzle: drizzleSvg,
@@ -41,10 +30,6 @@ const icons = {
 	clear: clearSvg,
 	clouds: cloudSvg,
 };
-
-function randomIndex(max) {
-	return Math.floor(Math.random() * max);
-}
 
 function App() {
 	const [img, setImg] = useState(images[randomIndex(images.length)]);
@@ -106,11 +91,6 @@ function App() {
 	return (
 		<div className="wrapper" style={{ backgroundImage: `url('${img}')` }}>
 			<div className="container">
-				{/* Encabezado */}
-				{/* <h1 className="heading">
-					_____________Frases de Batman:_____________
-					<br />
-				</h1> */}
 				<div className="card">
 					<h1 className="card__title">Weather APP</h1>
 					<h2 className="card__subtitle">
