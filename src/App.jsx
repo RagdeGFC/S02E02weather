@@ -5,7 +5,6 @@ import { bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9 } from './assets/images/';
 import randomIndex from './helpers/randomIndex';
 import initialState from './helpers/initialState';
 import conditionCodes from './helpers/conditionCodes';
-// import icons from './helpers/icons';
 
 import {
 	atmosphereSvg,
@@ -31,6 +30,17 @@ const icons = {
 	clouds: cloudSvg,
 };
 
+// Relaciona el tipo de clima con una imagen de fondo
+const weatherImages = {
+	Thunderstorm: bg1,
+	Drizzle: bg2,
+	Rain: bg3,
+	Snow: bg4,
+	Atmosphere: bg5,
+	Clear: bg6,
+	Clouds: bg7,
+};
+
 function App() {
 	const [img, setImg] = useState(images[randomIndex(images.length)]);
 	const [coords, setCoords] = useState(initialState);
@@ -39,6 +49,12 @@ function App() {
 
 	function changePhrase() {
 		setImg(images[randomIndex(images.length)]);
+	}
+
+	function handleBlurOnClick(e) {
+		setTimeout(() => {
+			e.target.blur();
+		}, 500);
 	}
 
 	useEffect(() => {
@@ -77,6 +93,12 @@ function App() {
 						pressure: res.data?.main?.pressure,
 						temperature: parseInt(res.data?.main?.temp - 273.15),
 					});
+
+					// Cambia la imagen de fondo según el clima SOLO al inicio
+					const main = res.data?.weather[0]?.main;
+					if (weatherImages[main]) {
+						setImg(weatherImages[main]);
+					}
 				})
 				.catch((err) => {
 					console.log(err);
@@ -113,12 +135,26 @@ function App() {
 						{temp}
 						{toggle ? '°F' : '°C'}
 					</h2>
-					<button onClick={() => setToggle(!toggle)}>
-						Change to {!toggle ? '°F' : '°C'}
-					</button>
-					<button onClick={changePhrase} className="btn">
-						Change image{' '}
-					</button>
+					<div className="card__button-group">
+						<button
+							onClick={(e) => {
+								setToggle(!toggle);
+								handleBlurOnClick(e);
+							}}
+							className="card__button"
+						>
+							Change to {!toggle ? '°F' : '°C'}
+						</button>
+						<button
+							onClick={(e) => {
+								changePhrase();
+								handleBlurOnClick(e);
+							}}
+							className="card__button"
+						>
+							Change image{' '}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

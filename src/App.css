@@ -26,27 +26,57 @@
 	max-width: 350px;
 	width: 100%;
 	padding: 2em 1.5em;
-	background-color: #00000093;
+	background-color: #000000b1;
 	-webkit-backdrop-filter: brightness(1.5) blur(5px);
 	backdrop-filter: brightness(1.2) blur(10px);
 	border-radius: 1.5em;
 	box-shadow: 0 4px 8px rgba(0, 0, 00.3);
-	transition: all0.3s ease;
+	transition: all 0.3s ease;
 	color: #ffffff;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #fff;
+}
+.card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 50%;
+	height: 100%;
+	background: linear-gradient(
+		120deg,
+		transparent,
+		rgba(255, 255, 255, 0.3),
+		transparent
+	);
+	transition: 0.5s;
+	pointer-events: none;
+}
+.card:hover::before {
+	left: 100%;
 }
 .card:hover {
-	box-shadow: 0 0 25px 0 #00000036;
+	box-shadow: 0 0 25px 0 #000000bb;
+	border: 2px #ffffff;
 }
 
 .card__title {
-	background-color: #00000088;
+	background-color: #000;
 	border-radius: 15px;
 	font-family: roboto;
 	font-size: 35px;
 	font-weight: bold;
-	color: rgba(255, 255, 255, 0.558);
+	color: #1aff00;
 	text-align: center;
 	-webkit-text-stroke: 0px #ffffff;
+	border: 2px solid #fff;
+}
+
+.card__title:hover {
+	box-shadow: 0 0 25px 0 #000000bb;
+	border: 2px solid #00ff2f;
+	color: #ffffff;
 }
 .card__subtitle {
 	text-align: center;
@@ -60,9 +90,30 @@
 	text-align: center;
 	margin-bottom: 0.25em;
 }
+
+button,
+.button-group button,
 .card__button {
-	display: block;
-	margin: 0 auto;
-	-webkit-backdrop-filter: brightness(1) blur(5px);
-	backdrop-filter: brightness(1) blur(5px);
+	background-color: #000;
+	color: #fff;
+	border: 2px solid #fff;
+	box-sizing: border-box;
+	border-radius: 15px;
+	transition: box-shadow 0.2s, color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+button:hover,
+.button-group button:hover,
+.card__button:hover {
+	background-color: #000;
+	color: #1aff00;
+	border: 2px solid #1aff00;
+	box-shadow: 0 0 8px #1aff0080;
+}
+
+.card__button-group {
+	display: flex;
+	gap: 1em;
+	justify-content: center;
+	margin-top: 1.5em;
 }
