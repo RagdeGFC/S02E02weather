@@ -117,3 +117,43 @@ button:hover,
 	justify-content: center;
 	margin-top: 1.5em;
 }
+
+.card__button {
+	width: 160px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.card--alt {
+	border: 1px solid #1aff00;
+}
+.card--alt:hover {
+	/* border: 2px solid #fff; */
+}
+
+.card__title--alt {
+	color: #fff;
+	border: 2px solid #1aff00;
+}
+.card__title--alt:hover {
+	color: #1aff00;
+	border: 2px solid #fff;
+}
+
+.card--alt .card__button {
+	border: 2px solid #1aff00;
+	color: #1aff00;
+}
+.card--alt .card__button:hover {
+	border: 2px solid #fff;
+	color: #fff;
+}
+
+.card__button.flash {
+	border: 2px solid #1aff00 !important;
+}
+.card--alt .card__button.flash {
+	border: 2px solid #fff !important;
+}

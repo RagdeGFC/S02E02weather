@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 import { bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9 } from './assets/images/';
@@ -46,6 +46,7 @@ function App() {
 	const [coords, setCoords] = useState(initialState);
 	const [weather, setWeather] = useState({});
 	const [toggle, setToggle] = useState(false);
+	const [themeToggle, setThemeToggle] = useState(false);
 
 	function changePhrase() {
 		setImg(images[randomIndex(images.length)]);
@@ -110,11 +111,24 @@ function App() {
 		? parseInt((weather.temperature * 9) / 5) + 32
 		: weather.temperature;
 
+	function flashButton(e) {
+		const btn = e.currentTarget;
+		btn.classList.add('flash');
+		setTimeout(() => {
+			btn.classList.remove('flash');
+			btn.blur();
+		}, 400);
+	}
+
 	return (
 		<div className="wrapper" style={{ backgroundImage: `url('${img}')` }}>
 			<div className="container">
-				<div className="card">
-					<h1 className="card__title">Weather APP</h1>
+				<div className={`card${themeToggle ? ' card--alt' : ''}`}>
+					<h1
+						className={`card__title${themeToggle ? ' card__title--alt' : ''}`}
+					>
+						Weather APP
+					</h1>
 					<h2 className="card__subtitle">
 						{weather.city},{weather.country}
 					</h2>
@@ -140,6 +154,7 @@ function App() {
 							onClick={(e) => {
 								setToggle(!toggle);
 								handleBlurOnClick(e);
+								flashButton(e);
 							}}
 							className="card__button"
 						>
@@ -149,10 +164,25 @@ function App() {
 							onClick={(e) => {
 								changePhrase();
 								handleBlurOnClick(e);
+								flashButton(e);
 							}}
 							className="card__button"
 						>
-							Change image{' '}
+							Background
+						</button>
+					</div>
+					<div className="card__button-group">
+						<button className="card__button" onClick={(e) => flashButton(e)}>
+							Set location
+						</button>
+						<button
+							className="card__button"
+							onClick={(e) => {
+								setThemeToggle(!themeToggle);
+								flashButton(e);
+							}}
+						>
+							Theme color
 						</button>
 					</div>
 				</div>
