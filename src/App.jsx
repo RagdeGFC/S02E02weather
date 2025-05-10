@@ -1,7 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
-import { bg1, bg2, bg3, bg4, bg5, bg6, bg7 } from './assets/images/';
+import {
+	bg1,
+	bg2,
+	bg3,
+	bg4,
+	bg5,
+	bg6,
+	bg7,
+	nightSvg,
+	bg8,
+} from './assets/images/';
 import randomIndex from './helpers/randomIndex';
 import initialState from './helpers/initialState';
 import conditionCodes from './helpers/conditionCodes';
@@ -30,15 +40,22 @@ const icons = {
 	clouds: cloudSvg,
 };
 
+// Íconos para condiciones nocturnas (clear será nightSvg)
+const nightIcons = {
+	...icons,
+	clear: nightSvg,
+};
+
 // Relaciona el tipo de clima con una imagen de fondo
 const weatherImages = {
-	Thunderstorm: bg1, // Tormenta eléctrica — imágenes con rayos, cielos oscuros y nubes densas.
-	Drizzle: bg2, // Llovizna — imágenes de llovizna ligera, calles mojadas, paraguas.
-	Rain: bg3, // Lluvia — lluvia más intensa, charcos grandes, gotas golpeando el agua.
-	Snow: bg4, // Nieve — paisajes nevados, copos cayendo, árboles cubiertos de nieve.
-	Atmosphere: bg5, // Atmósfera — (esto suele incluir niebla, humo, polvo) busca imágenes de niebla densa o paisaje con visibilidad reducida.
-	Clear: bg6, // Despejado — cielos completamente azules, sol brillante, paisaje soleado.
-	Clouds: bg7, // Nublado — cielos cubiertos de nubes, pero sin lluvia (puede ser gris claro o dramático).
+	Thunderstorm: bg1,
+	Drizzle: bg2,
+	Rain: bg3,
+	Snow: bg4,
+	Atmosphere: bg5,
+	Clear: bg6,
+	Clouds: bg7,
+	ClearNight: bg8,
 };
 
 function App() {
@@ -49,6 +66,8 @@ function App() {
 	const [themeToggle, setThemeToggle] = useState(false);
 	const [showLocationForm, setShowLocationForm] = useState(false);
 	const [cityInput, setCityInput] = useState('');
+	const [localTime, setLocalTime] = useState('');
+	const [localSuffix, setLocalSuffix] = useState('');
 
 	function changePhrase() {
 		setVideo(images[randomIndex(images.length)]);
@@ -80,26 +99,32 @@ function App() {
 					`${url}?lat=${coords.latitude}&lon=${coords.longitude}&appid=${key}`,
 				)
 				.then((res) => {
-					console.log(res);
 					const keys = Object.keys(conditionCodes);
 					const iconName = keys.find((key) =>
 						conditionCodes[key].includes(res.data?.weather[0]?.id),
 					);
 
+					const nowUTC = new Date();
+					const local = new Date(nowUTC.getTime() + res.data?.timezone * 1000);
+					const hour = local.getUTCHours();
+					const isNight = hour >= 19 || hour < 6;
+					const iconSet = isNight ? nightIcons : icons;
+
 					setWeather({
 						city: res.data?.name,
 						country: res.data?.sys?.country,
-						icon: icons[iconName],
+						icon: iconSet[iconName],
 						main: res.data?.weather[0]?.main,
 						wind: res.data?.wind?.speed,
 						clouds: res.data?.clouds?.all,
 						pressure: res.data?.main?.pressure,
 						temperature: parseInt(res.data?.main?.temp - 273.15),
+						timezone: res.data?.timezone,
 					});
-
-					// Cambia la imagen de fondo según el clima SOLO al inicio
 					const main = res.data?.weather[0]?.main;
-					if (weatherImages[main]) {
+					if (main === 'Clear' && isNight) {
+						setVideo(weatherImages['ClearNight']);
+					} else if (weatherImages[main]) {
 						setVideo(weatherImages[main]);
 					}
 				})
@@ -108,6 +133,26 @@ function App() {
 				});
 		}
 	}, [coords]);
+
+	// Actualizar la hora local cada segundo
+	useEffect(() => {
+		if (weather.timezone !== undefined) {
+			const interval = setInterval(() => {
+				const nowUTC = new Date();
+				const local = new Date(nowUTC.getTime() + weather.timezone * 1000);
+				let hours = local.getUTCHours();
+				const minutes = local.getUTCMinutes().toString().padStart(2, '0');
+				const seconds = local.getUTCSeconds().toString().padStart(2, '0');
+				const ampm = hours >= 12 ? 'PM' : 'AM';
+				hours = hours % 12;
+				hours = hours ? hours : 12;
+				const hoursStr = hours.toString().padStart(2, '0');
+				setLocalTime(`${hoursStr}:${minutes}:${seconds}`);
+				setLocalSuffix(ampm);
+			}, 1000);
+			return () => clearInterval(interval);
+		}
+	}, [weather.timezone]);
 
 	const temp = toggle
 		? parseInt((weather.temperature * 9) / 5) + 32
@@ -132,18 +177,29 @@ function App() {
 				const iconName = keys.find((key) =>
 					conditionCodes[key].includes(res.data?.weather[0]?.id),
 				);
+
+				// Determinar si es de noche (después de las 19:00 o antes de las 6:00)
+				const nowUTC = new Date();
+				const local = new Date(nowUTC.getTime() + res.data?.timezone * 1000);
+				const hour = local.getUTCHours();
+				const isNight = hour >= 19 || hour < 6;
+				const iconSet = isNight ? nightIcons : icons;
+
 				setWeather({
 					city: res.data?.name,
 					country: res.data?.sys?.country,
-					icon: icons[iconName],
+					icon: iconSet[iconName],
 					main: res.data?.weather[0]?.main,
 					wind: res.data?.wind?.speed,
 					clouds: res.data?.clouds?.all,
 					pressure: res.data?.main?.pressure,
 					temperature: parseInt(res.data?.main?.temp - 273.15),
+					timezone: res.data?.timezone,
 				});
 				const main = res.data?.weather[0]?.main;
-				if (weatherImages[main]) {
+				if (main === 'Clear' && isNight) {
+					setVideo(weatherImages['ClearNight']);
+				} else if (weatherImages[main]) {
 					setVideo(weatherImages[main]);
 				}
 				setShowLocationForm(false);
@@ -204,6 +260,18 @@ function App() {
 					<h2 className="card__temperature">
 						{temp}
 						{toggle ? '°F' : '°C'}
+						<span
+							style={{
+								marginLeft: '16px',
+								fontSize: '1.2rem',
+								color: '#1aff00',
+							}}
+						>
+							{localTime}
+							<span style={{ color: '#fff', marginLeft: 4 }}>
+								{localSuffix}
+							</span>
+						</span>
 					</h2>
 					<div className="card__button-group">
 						<button
