@@ -47,6 +47,8 @@ function App() {
 	const [weather, setWeather] = useState({});
 	const [toggle, setToggle] = useState(false);
 	const [themeToggle, setThemeToggle] = useState(false);
+	const [showLocationForm, setShowLocationForm] = useState(false);
+	const [cityInput, setCityInput] = useState('');
 
 	function changePhrase() {
 		setImg(images[randomIndex(images.length)]);
@@ -120,6 +122,52 @@ function App() {
 		}, 400);
 	}
 
+	function handleLocationSubmit(e) {
+		e.preventDefault();
+		if (!cityInput) return;
+		axios
+			.get(`${url}?q=${cityInput}&appid=${key}`)
+			.then((res) => {
+				const keys = Object.keys(conditionCodes);
+				const iconName = keys.find((key) =>
+					conditionCodes[key].includes(res.data?.weather[0]?.id),
+				);
+				setWeather({
+					city: res.data?.name,
+					country: res.data?.sys?.country,
+					icon: icons[iconName],
+					main: res.data?.weather[0]?.main,
+					wind: res.data?.wind?.speed,
+					clouds: res.data?.clouds?.all,
+					pressure: res.data?.main?.pressure,
+					temperature: parseInt(res.data?.main?.temp - 273.15),
+				});
+				const main = res.data?.weather[0]?.main;
+				if (weatherImages[main]) {
+					setImg(weatherImages[main]);
+				}
+				setShowLocationForm(false);
+				setCityInput('');
+			})
+			.catch((err) => {
+				alert('Ciudad no encontrada');
+			});
+	}
+
+	function handleReturnToLocation() {
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const { latitude, longitude } = position.coords;
+				setCoords({ latitude, longitude });
+				setShowLocationForm(false);
+				setCityInput('');
+			},
+			(error) => {
+				alert('No se pudo obtener la ubicación');
+			},
+		);
+	}
+
 	return (
 		<div className="wrapper" style={{ backgroundImage: `url('${img}')` }}>
 			<div className="container">
@@ -172,7 +220,13 @@ function App() {
 						</button>
 					</div>
 					<div className="card__button-group">
-						<button className="card__button" onClick={(e) => flashButton(e)}>
+						<button
+							className="card__button"
+							onClick={(e) => {
+								flashButton(e);
+								setShowLocationForm(true);
+							}}
+						>
 							Set location
 						</button>
 						<button
@@ -186,6 +240,39 @@ function App() {
 						</button>
 					</div>
 				</div>
+				{showLocationForm && (
+					<div className="location-form__overlay">
+						<form className="location-form" onSubmit={handleLocationSubmit}>
+							<input
+								className="location-form__input"
+								type="text"
+								placeholder="Escribe una ciudad..."
+								value={cityInput}
+								onChange={(e) => setCityInput(e.target.value)}
+								autoFocus
+							/>
+							<div className="location-form__buttons">
+								<button type="submit" className="card__button">
+									Buscar
+								</button>
+								<button
+									type="button"
+									className="card__button"
+									onClick={handleReturnToLocation}
+								>
+									Regresar a mi ubicación
+								</button>
+								<button
+									type="button"
+									className="card__button"
+									onClick={() => setShowLocationForm(false)}
+								>
+									Cancelar
+								</button>
+							</div>
+						</form>
+					</div>
+				)}
 			</div>
 		</div>
 	);

@@ -157,3 +157,46 @@ button:hover,
 .card--alt .card__button.flash {
 	border: 2px solid #fff !important;
 }
+
+.location-form__overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.location-form {
+	background: #000000d9;
+	border-radius: 1.5em;
+	padding: 2em 2em 1em 2em;
+	box-shadow: 0 4px 24px #000a;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5em;
+}
+.location-form__input {
+	width: 250px;
+	padding: 0.7em 1em;
+	border-radius: 10px;
+	border: 2px solid #1aff00;
+	font-size: 1.1em;
+	outline: none;
+	margin-bottom: 1em;
+	background: #111;
+	color: #fff;
+	text-align: center;
+}
+.location-form__input:focus {
+	border: 2px solid #fff;
+}
+.location-form__buttons {
+	display: flex;
+	gap: 1em;
+	justify-content: center;
+}
