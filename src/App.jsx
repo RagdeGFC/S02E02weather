@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
-import { bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9 } from './assets/images/';
+import { bg1, bg2, bg3, bg4, bg5, bg6, bg7 } from './assets/images/';
 import randomIndex from './helpers/randomIndex';
 import initialState from './helpers/initialState';
 import conditionCodes from './helpers/conditionCodes';
@@ -16,7 +16,7 @@ import {
 	thunderstormSvg,
 } from './assets/images/';
 
-const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9];
+const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7];
 const key = 'eeb9fbc4375472b2fb1cb0109bf62e04';
 const url = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -32,17 +32,17 @@ const icons = {
 
 // Relaciona el tipo de clima con una imagen de fondo
 const weatherImages = {
-	Thunderstorm: bg1,
-	Drizzle: bg2,
-	Rain: bg3,
-	Snow: bg4,
-	Atmosphere: bg5,
-	Clear: bg6,
-	Clouds: bg7,
+	Thunderstorm: bg1, // Tormenta eléctrica — imágenes con rayos, cielos oscuros y nubes densas.
+	Drizzle: bg2, // Llovizna — imágenes de llovizna ligera, calles mojadas, paraguas.
+	Rain: bg3, // Lluvia — lluvia más intensa, charcos grandes, gotas golpeando el agua.
+	Snow: bg4, // Nieve — paisajes nevados, copos cayendo, árboles cubiertos de nieve.
+	Atmosphere: bg5, // Atmósfera — (esto suele incluir niebla, humo, polvo) busca imágenes de niebla densa o paisaje con visibilidad reducida.
+	Clear: bg6, // Despejado — cielos completamente azules, sol brillante, paisaje soleado.
+	Clouds: bg7, // Nublado — cielos cubiertos de nubes, pero sin lluvia (puede ser gris claro o dramático).
 };
 
 function App() {
-	const [img, setImg] = useState(images[randomIndex(images.length)]);
+	const [video, setVideo] = useState(images[randomIndex(images.length)]);
 	const [coords, setCoords] = useState(initialState);
 	const [weather, setWeather] = useState({});
 	const [toggle, setToggle] = useState(false);
@@ -51,7 +51,7 @@ function App() {
 	const [cityInput, setCityInput] = useState('');
 
 	function changePhrase() {
-		setImg(images[randomIndex(images.length)]);
+		setVideo(images[randomIndex(images.length)]);
 	}
 
 	function handleBlurOnClick(e) {
@@ -100,7 +100,7 @@ function App() {
 					// Cambia la imagen de fondo según el clima SOLO al inicio
 					const main = res.data?.weather[0]?.main;
 					if (weatherImages[main]) {
-						setImg(weatherImages[main]);
+						setVideo(weatherImages[main]);
 					}
 				})
 				.catch((err) => {
@@ -144,7 +144,7 @@ function App() {
 				});
 				const main = res.data?.weather[0]?.main;
 				if (weatherImages[main]) {
-					setImg(weatherImages[main]);
+					setVideo(weatherImages[main]);
 				}
 				setShowLocationForm(false);
 				setCityInput('');
@@ -169,7 +169,15 @@ function App() {
 	}
 
 	return (
-		<div className="wrapper" style={{ backgroundImage: `url('${img}')` }}>
+		<div className="wrapper">
+			<video
+				className="background-video"
+				autoPlay
+				loop
+				muted
+				playsInline
+				src={video}
+			/>
 			<div className="container">
 				<div className={`card${themeToggle ? ' card--alt' : ''}`}>
 					<h1
