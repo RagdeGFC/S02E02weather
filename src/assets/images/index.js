@@ -15,3 +15,4 @@ export { default as bg5 } from './bg5.mp4';
 export { default as bg6 } from './bg6.mp4';
 export { default as bg7 } from './bg7.mp4';
 export { default as bg8 } from './bg8.mp4';
+export { default as bg9 } from './bg9.mp4';

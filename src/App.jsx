@@ -1,17 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
-import {
-	bg1,
-	bg2,
-	bg3,
-	bg4,
-	bg5,
-	bg6,
-	bg7,
-	nightSvg,
-	bg8,
-} from './assets/images/';
+import { bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9 } from './assets/images/';
 import randomIndex from './helpers/randomIndex';
 import initialState from './helpers/initialState';
 import conditionCodes from './helpers/conditionCodes';
@@ -24,9 +14,10 @@ import {
 	rainSvg,
 	snowSvg,
 	thunderstormSvg,
+	nightSvg,
 } from './assets/images/';
 
-const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7];
+const images = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9];
 const key = 'eeb9fbc4375472b2fb1cb0109bf62e04';
 const url = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -56,7 +47,29 @@ const weatherImages = {
 	Clear: bg6,
 	Clouds: bg7,
 	ClearNight: bg8,
+	CloudsNight: bg9,
 };
+
+// Función para mapear el main de la API a la clave de weatherImages
+function getWeatherKey(main, isNight) {
+	if (main === 'Clear' && isNight) return 'ClearNight';
+	if (main === 'Clouds' && isNight) return 'CloudsNight';
+	if (
+		[
+			'Mist',
+			'Smoke',
+			'Haze',
+			'Dust',
+			'Fog',
+			'Sand',
+			'Ash',
+			'Squall',
+			'Tornado',
+		].includes(main)
+	)
+		return 'Atmosphere';
+	return main;
+}
 
 function App() {
 	const [video, setVideo] = useState(images[randomIndex(images.length)]);
@@ -122,10 +135,9 @@ function App() {
 						timezone: res.data?.timezone,
 					});
 					const main = res.data?.weather[0]?.main;
-					if (main === 'Clear' && isNight) {
-						setVideo(weatherImages['ClearNight']);
-					} else if (weatherImages[main]) {
-						setVideo(weatherImages[main]);
+					const key = getWeatherKey(main, isNight);
+					if (weatherImages[key]) {
+						setVideo(weatherImages[key]);
 					}
 				})
 				.catch((err) => {
@@ -197,10 +209,9 @@ function App() {
 					timezone: res.data?.timezone,
 				});
 				const main = res.data?.weather[0]?.main;
-				if (main === 'Clear' && isNight) {
-					setVideo(weatherImages['ClearNight']);
-				} else if (weatherImages[main]) {
-					setVideo(weatherImages[main]);
+				const key = getWeatherKey(main, isNight);
+				if (weatherImages[key]) {
+					setVideo(weatherImages[key]);
 				}
 				setShowLocationForm(false);
 				setCityInput('');
@@ -268,7 +279,7 @@ function App() {
 							}}
 						>
 							{localTime}
-							<span style={{ color: '#fff', marginLeft: 4 }}>
+							<span style={{ color: '#fff', marginLeft: 4, fontSize: '0.8em' }}>
 								{localSuffix}
 							</span>
 						</span>
